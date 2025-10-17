@@ -1,22 +1,11 @@
-name: NUVEXA 
-# لا احلل ابدا نسخ الملف بدون ذكر حقوقي. وساكون خصيمك يوم الدين 
-
+name: cloudcore
 on:
-  schedule:
-    - cron: "0 */6 * * *"   # تشغيل تلقائي كل 6 ساعات
   workflow_dispatch:
-
 jobs:
   secure-rdp:
     runs-on: windows-latest
     timeout-minutes: 3600
     steps:
-      - name: Checkout main code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Configure Core RDP Settings
         run: |
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
@@ -28,7 +17,7 @@ jobs:
 
       - name: Create RDP User with Static Password
         run: |
-          $password = "NUVEXA "
+          $password = "admin@123"
           $securePass = ConvertTo-SecureString $password -AsPlainText -Force
 
           if (-not (Get-LocalUser -Name "TOOLBOXLAP" -ErrorAction SilentlyContinue)) {
@@ -80,24 +69,12 @@ jobs:
           }
           Write-Host "TCP connectivity successful!"
 
-      - name: Save RDP data to rdp-storage branch
-        if: always()
-        run: |
-          git checkout main
-          git checkout rdp-storage 2>/dev/null || git checkout -b rdp-storage
-          git rm -rf . 2>/dev/null || true
-          git add --all
-          git reset -- .github/   # استثناء ملفات إعدادات GitHub
-          git commit -m "💻 Auto-save RDP data - $(date +'%Y-%m-%d %H:%M:%S')" || echo "لا توجد تغييرات للحفظ"
-          git push origin rdp-storage --force || echo "فشل في رفع البيانات"
-          git checkout main
-
       - name: Maintain Connection
         run: |
           Write-Host "`n=== RDP ACCESS ==="
           Write-Host "Address: $env:TAILSCALE_IP"
           Write-Host "Username: TOOLBOXLAP"
-          Write-Host "Password: NUVEXA"
+          Write-Host "Password: cloudcore"
           Write-Host "==================`n"
           while ($true) {
               Write-Host "[$(Get-Date)] RDP Active - Use Ctrl+C in workflow to terminate"
