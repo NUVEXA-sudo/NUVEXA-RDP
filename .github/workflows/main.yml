@@ -1,8 +1,5 @@
 name:Nuvexa
-
-
-
-on:
+on: 
   schedule:
     - cron: "0 */6 * * *"   # تشغيل تلقائي كل 6 ساعات
   workflow_dispatch:
